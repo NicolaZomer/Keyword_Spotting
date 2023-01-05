@@ -1,0 +1,4 @@
+# Speech command recognition (Keyword Spotting)
+In this project we use the [Speech Commands dataset](https://www.tensorflow.org/datasets/catalog/speech_commands), which contains short (one-second long) audio clips of English commands, stored as audio files in the WAV format. More in detail, the version 0.02 of the dataset contains 105.829 utterances of 35 short words, by thousands of different people. It was released on April 11th 2018 under [Creative Commons BY 4.0 license](https://creativecommons.org/licenses/by/4.0/) and collected using crowdsourcing, through [AIY](https://aiyprojects.withgoogle.com/) by Google. Some of these words are "yes", "no", "up", "down", "left", "right", "on", "off", "stop" and "go".
+
+This project is developed as a final project of the course  [Human Data Analytics](https://en.didattica.unipd.it/off/2022/LM/IN/IN2371/004PD/INP9087860/N0).
