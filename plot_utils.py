@@ -2,7 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 def hist_class_distribution(set_x, ax, commands):
+
     frequencies = []
     
     for command in commands:
@@ -13,23 +15,7 @@ def hist_class_distribution(set_x, ax, commands):
     ax.bar(commands, frequencies, edgecolor='black', alpha=0.5, color='forestgreen')
     
     
-def plot_spectrogram(spectrogram, ax):
-  
-    if len(spectrogram.shape) > 2:
-        assert len(spectrogram.shape) == 3
-        spectrogram = np.squeeze(spectrogram, axis=-1)
-
-    # Convert the frequencies to log scale and transpose, so that the time is represented on the x-axis (columns).
-    # Add an epsilon to avoid taking a log of zero.
-    log_spec = np.log(spectrogram.T + np.finfo(float).eps)
-    height = log_spec.shape[0]
-    width = log_spec.shape[1]
-    X = np.linspace(0, np.size(spectrogram), num=width, dtype=int)
-    Y = range(height)
-    ax.pcolormesh(X, Y, log_spec)
-    
-    
-def plot_mfcc(features, title=None):
+def plot_features(features, title=None):
 
     _, ax = plt.subplots(figsize=(14, 10))
     ax = sns.heatmap(features)
@@ -71,5 +57,3 @@ def plot_confusion_matrix(cm, labels, annot=True, cmap='Blues'):
 
     plt.tight_layout()
     plt.show()
-    
-    
