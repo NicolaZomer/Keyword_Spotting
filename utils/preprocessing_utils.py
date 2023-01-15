@@ -221,7 +221,7 @@ def get_mfcc(
     return full_feat
 
 
-def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, features=1):
+def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, features=1):
     '''
     features:
     - 1 for MFCC features (default)
@@ -238,7 +238,7 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     
     # add background noise
     if apply_background_noise:
-        data = background_noise(data)
+        data = background_noise(data, noise_dict=noise_dict)
 
     # extract features
     if features == 1:
