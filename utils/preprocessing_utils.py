@@ -221,7 +221,7 @@ def get_mfcc(
     return full_feat
 
 
-def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, features=1):
+def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, features=None):
     '''
     features:
     - 1 for MFCC features (default)
@@ -253,7 +253,10 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     elif features == 4:
         data, _ = dwt(data=data, wavelet='db1', mode='sym')
         data_features = get_mfcc(data)
-      
+    
+    elif features is None:
+        pass
+    
     else:
         raise Exception("'features' must be 1 or 2")
     
