@@ -254,11 +254,8 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
         data, _ = dwt(data=data, wavelet='db1', mode='sym')
         data_features = get_mfcc(data)
     
-    elif features is None:
-        data_features = data
-    
     else:
-        raise Exception("'features' must be 1 or 2")
+        data_features = data
     
     # TensorFlow takes as input 32-bit floating point data
     return data_features.astype(np.float32)
