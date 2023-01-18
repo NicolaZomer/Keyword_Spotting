@@ -6,41 +6,41 @@ from pywt import dwt
 from python_speech_features import logfbank, mfcc, delta
 
 commands = [
-    'down',
-    'cat', 
-    'bird', 
-    'yes', 
-    'one', 
-    'backward', 
-    'zero', 
-    'up', 
-    'sheila', 
-    'house',
-    'left', 
-    'go', 
-    'three', 
-    'on', 
-    'nine', 
-    'forward', 
-    'six', 
-    'tree', 
-    'seven', 
-    'marvin',
-    'right',
-    'off', 
-    'eight', 
-    'follow',
-    'stop', 
-    'four',
-    'happy',
-    'wow',
-    'visual',
-    'two',
-    'bed', 
-    'learn', 
-    'dog', 
-    'no',
-    'five'
+  'backward',
+  'bed',
+  'bird',
+  'cat',
+  'dog',
+  'down',
+  'eight',
+  'five',
+  'follow',
+  'forward',
+  'four',
+  'go',
+  'happy',
+  'house',
+  'learn',
+  'left',
+  'marvin',
+  'nine',
+  'no',
+  'off',
+  'on',
+  'one',
+  'right',
+  'seven',
+  'sheila',
+  'six',
+  'stop',
+  'three',
+  'tree',
+  'two',
+  'up',
+  'visual',
+  'wow',
+  'yes',
+  'zero'
 ]
 
 label_to_class = {commands[i]:i for i in range(len(commands))}
@@ -231,7 +231,7 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     '''
     
     # load data
-    data = load_data(file_name, file_label, data_path_=data_path)
+    data = load_data(file_name, file_label, data_path_=data_path_)
     
     # padding/trimming
     data = padding_trimming(data)
