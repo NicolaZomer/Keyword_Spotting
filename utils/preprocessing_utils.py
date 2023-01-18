@@ -85,7 +85,7 @@ def padding_trimming(data, output_sequence_length=16000):
     return data
 
 
-def background_noise(data, noise_dict, select_noise=None, noise_reduction=0.8):
+def background_noise(data, noise_dict, select_noise=None, noise_reduction=0.5):
     '''
     data: input audio signal, already loaded and preprocessed, it must be a numpy array 
     select_noise: decide what kind of noise to add to the input signal, by default a random choice 
@@ -223,7 +223,7 @@ def get_mfcc(
     return full_feat
 
 
-def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, features=1, resize=False):
+def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, noise_reduction=0.5, features=1, resize=False):
     '''
     features:
     - 1 for MFCC features (default)
@@ -240,7 +240,7 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     
     # add background noise
     if apply_background_noise:
-        data = background_noise(data, noise_dict=noise_dict)
+        data = background_noise(data, noise_dict=noise_dict, noise_reduction=noise_reduction)
 
     # extract features
     if features == 1:
