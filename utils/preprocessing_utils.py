@@ -221,7 +221,7 @@ def get_mfcc(
     return full_feat
 
 
-def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, features=1):
+def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, features=1, resize=False):
     '''
     features:
     - 1 for MFCC features (default)
@@ -257,5 +257,12 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     else:
         data_features = data
     
+    # resize feature vector
+    if resize:
+        data_features = np.resize(data_features, (50, 50))
+        
     # TensorFlow takes as input 32-bit floating point data
     return data_features.astype(np.float32)
+
+def remove_file_starting_with(name):
+    ! rm {name}*
