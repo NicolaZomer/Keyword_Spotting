@@ -3,6 +3,8 @@ import numpy as np
 import tensorflow as tf
 from scipy.io import wavfile
 from pywt import dwt
+import os
+import glob
 from python_speech_features import logfbank, mfcc, delta
 
 commands = [
@@ -265,4 +267,5 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     return data_features.astype(np.float32)
 
 def remove_file_starting_with(name):
-    ! rm {name}*
+    for filename in glob.glob(name+'*'):
+        os.remove(filename) 
