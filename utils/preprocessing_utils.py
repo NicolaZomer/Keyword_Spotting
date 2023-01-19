@@ -3,8 +3,11 @@ import numpy as np
 import tensorflow as tf
 from scipy.io import wavfile
 from pywt import dwt
+
 import os
 import glob
+import importlib
+
 from python_speech_features import logfbank, mfcc, delta
 
 commands = [
@@ -226,10 +229,11 @@ def get_mfcc(
 def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, noise_reduction=0.5, features=1, resize=False):
     '''
     features:
-    - 1 for MFCC features (default)
+    - 1 for MFCC features (default), delta_order=2
     - 2 for log Mel-filterbank energy features
     - 3 for spectrogram
     - 4 for Discrete Wavelet Transform + MFCC features
+    - 5 for MFCC features, delta_order=0
     '''
     
     # load data
@@ -255,7 +259,10 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     elif features == 4:
         data, _ = dwt(data=data, wavelet='db1', mode='sym')
         data_features = get_mfcc(data)
-    
+        
+    elif features == 5:
+        data_features = get_mfcc(data, delta_order=0)
+        
     else:
         data_features = data
     
@@ -269,3 +276,6 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
 def remove_file_starting_with(name):
     for filename in glob.glob(name+'*'):
         os.remove(filename) 
+        
+def reimport_module(module_name):
+    importlib.reload(module_name)
