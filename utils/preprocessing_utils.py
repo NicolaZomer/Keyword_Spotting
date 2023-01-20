@@ -263,6 +263,9 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     elif features == 5:
         data_features = get_mfcc(data, delta_order=0)
         
+    elif features == 6:
+        data_features = get_logfbank(data, winlen=32, winstep=15.5, nfilt=64)
+        
     else:
         data_features = data
     
