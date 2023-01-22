@@ -243,7 +243,7 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     data = padding_trimming(data)
     
     # add background noise
-    if apply_background_noise:
+    if apply_background_noise and np.random.uniform()<0.8:
         data = background_noise(data, noise_dict=noise_dict, noise_reduction=noise_reduction)
 
     # extract features
