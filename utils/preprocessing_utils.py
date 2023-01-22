@@ -88,6 +88,17 @@ def padding_trimming(data, output_sequence_length=16000):
     return data
 
 
+def random_time_shift(data, low=-100, high=100):
+  y_shift = int(np.random.uniform(low, high)*16)
+
+  if y_shift>=0:
+    data = np.pad(data[y_shift:], pad_width=(0, y_shift), mode='mean')
+  else: 
+    data = np.pad(data[:len(data)+y_shift], pad_width=(-y_shift, 0), mode='mean')
+
+  return data
+
+
 def background_noise(data, noise_dict, select_noise=None, noise_reduction=0.5):
     '''
     data: input audio signal, already loaded and preprocessed, it must be a numpy array 
@@ -241,6 +252,9 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     
     # padding/trimming
     data = padding_trimming(data)
+
+    # random time shift
+    data = random_time_shift(data)
     
     # add background noise
     if apply_background_noise and np.random.uniform()<0.8:
