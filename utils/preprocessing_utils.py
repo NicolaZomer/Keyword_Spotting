@@ -128,15 +128,6 @@ def background_noise(data, noise_dict, select_noise=None, noise_reduction=0.5):
     return data_with_noise
 
 
-def butter_bandpass(lowcut, highcut, fs, order=5):
-    return butter(order, [lowcut, highcut], fs=fs, btype='band')
-
-def butter_bandpass_filter(data, lowcut=20.0, highcut=400.0,fs=16000, order=5):
-    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
-    return y
-
-
 def get_spectrogram(
                     signal,                               # audio signal from which to compute features (N*1 array)
                     samplerate = 16000,                   # samplerate of the signal we are working with
@@ -247,7 +238,7 @@ def get_mfcc(
     return full_feat
 
 
-def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, noise_reduction=0.5, features=1, resize=False, random_shift=False, band_pass=False):
+def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, noise_reduction=0.5, features=1, resize=False, random_shift=False):
     '''
     features:
     - 1 for MFCC features (default), delta_order=2
@@ -270,10 +261,6 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_
     # add background noise
     if apply_background_noise and np.random.uniform()<0.8:
         data = background_noise(data, noise_dict=noise_dict, noise_reduction=noise_reduction)
-        
-    # band pass filter
-    if band_pass:
-        data = butter_bandpass_filter(data)
 
     # extract features
     if features == 1:
