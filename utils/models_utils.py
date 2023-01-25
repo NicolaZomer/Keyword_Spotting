@@ -270,7 +270,6 @@ def RNNSpeechModel(input_shape=(99, 40), output_shape=35):
     x = L.BatchNormalization()(x)
     x = L.Conv2D(1, (5, 1), activation='relu', padding='same')(x)
     x = L.BatchNormalization()(x)
-    x = L.Dropout(0.3)(x)
     
     # x = Reshape((125, 80)) (x)
     # keras.backend.squeeze(x, axis)
@@ -301,7 +300,6 @@ def AttRNNSpeechModel(input_shape=(99, 40), output_shape=35, rnn_func=L.LSTM):
     x = L.BatchNormalization()(x)
     x = L.Conv2D(1, (5, 1), activation='relu', padding='same')(x)
     x = L.BatchNormalization()(x)
-    x = L.Dropout(0.1)(x)
 
     # x = Reshape((125, 80)) (x)
     # keras.backend.squeeze(x, axis)
