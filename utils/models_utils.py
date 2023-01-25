@@ -261,8 +261,7 @@ def resnet(input_shape=(99, 40), output_shape=35, n_filters=45, num_blocks=3, ks
 def RNNSpeechModel(input_shape=(99, 40), output_shape=35):
     # simple LSTM
     input_layer = L.Input(shape=input_shape)
-    reshape_layer = L.Reshape(input_shape=input_shape, target_shape=(input_shape[0], input_shape[1], 1))(input_layer)
-    x = L.BatchNormalization()(reshape_layer)
+    x = L.Reshape(input_shape=input_shape, target_shape=(input_shape[0], input_shape[1], 1))(input_layer)
     
     # x = Normalization2D(int_axis=0)(x)
     # x = L.Permute((2, 1, 3))(x)
@@ -293,8 +292,7 @@ def RNNSpeechModel(input_shape=(99, 40), output_shape=35):
 def AttRNNSpeechModel(input_shape=(99, 40), output_shape=35, rnn_func=L.LSTM):
     # simple LSTM
     input_layer = L.Input(shape=input_shape)
-    reshape_layer = L.Reshape(input_shape=input_shape, target_shape=(input_shape[0], input_shape[1], 1))(input_layer)
-    x = L.BatchNormalization()(reshape_layer)
+    x = L.Reshape(input_shape=input_shape, target_shape=(input_shape[0], input_shape[1], 1))(input_layer)
 
     # x = Normalization2D(int_axis=0, name='mel_stft_norm')(x)
     # x = L.Permute((2, 1, 3))(x)
@@ -303,7 +301,7 @@ def AttRNNSpeechModel(input_shape=(99, 40), output_shape=35, rnn_func=L.LSTM):
     x = L.BatchNormalization()(x)
     x = L.Conv2D(1, (5, 1), activation='relu', padding='same')(x)
     x = L.BatchNormalization()(x)
-    x = L.Dropout(0.2)(x)
+    x = L.Dropout(0.1)(x)
 
     # x = Reshape((125, 80)) (x)
     # keras.backend.squeeze(x, axis)
@@ -323,7 +321,7 @@ def AttRNNSpeechModel(input_shape=(99, 40), output_shape=35, rnn_func=L.LSTM):
     attVector = L.Dot(axes=[1, 1])([attScores, x])  # [b_s, vec_dim]
 
     x = L.Dense(64, activation='relu')(attVector)
-    x = L.Dropout(0.2)(x)
+    x = L.Dropout(0.3)(x)
     
     output = L.Dense(output_shape, activation='softmax', name='output')(x)
 
