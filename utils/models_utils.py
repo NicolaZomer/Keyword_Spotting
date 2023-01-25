@@ -279,7 +279,7 @@ def RNNSpeechModel(input_shape=(99, 40), output_shape=35):
     x = L.Bidirectional(L.CuDNNLSTM(64))(x)
 
     x = L.Dense(64, activation='relu')(x)
-    x = L.Dense(32, activation='relu')(x)
+    x = L.Dropout(0.4)(x)
 
     output = L.Dense(output_shape, activation='softmax')(x)
 
@@ -319,8 +319,8 @@ def AttRNNSpeechModel(input_shape=(99, 40), output_shape=35, rnn_func=L.LSTM):
     attVector = L.Dot(axes=[1, 1])([attScores, x])  # [b_s, vec_dim]
 
     x = L.Dense(64, activation='relu')(attVector)
-    x = L.Dense(32)(x)
-
+    x = L.Dropout(0.4)(x)
+    
     output = L.Dense(output_shape, activation='softmax', name='output')(x)
 
     model = Model(inputs=input_layer, outputs=output, name='AttRNNSpeechModel')
