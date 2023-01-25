@@ -270,7 +270,8 @@ def RNNSpeechModel(input_shape=(99, 40), output_shape=35):
     x = L.BatchNormalization()(x)
     x = L.Conv2D(1, (5, 1), activation='relu', padding='same')(x)
     x = L.BatchNormalization()(x)
-
+    x = L.Dropout(0.3)(x)
+    
     # x = Reshape((125, 80)) (x)
     # keras.backend.squeeze(x, axis)
     x = L.Lambda(lambda q: K.squeeze(q, -1), name='squeeze_last_dim')(x)
@@ -279,7 +280,7 @@ def RNNSpeechModel(input_shape=(99, 40), output_shape=35):
     x = L.Bidirectional(L.CuDNNLSTM(64))(x)
 
     x = L.Dense(64, activation='relu')(x)
-    x = L.Dropout(0.4)(x)
+    x = L.Dropout(0.3)(x)
 
     output = L.Dense(output_shape, activation='softmax')(x)
 
@@ -300,6 +301,7 @@ def AttRNNSpeechModel(input_shape=(99, 40), output_shape=35, rnn_func=L.LSTM):
     x = L.BatchNormalization()(x)
     x = L.Conv2D(1, (5, 1), activation='relu', padding='same')(x)
     x = L.BatchNormalization()(x)
+    x = L.Dropout(0.3)(x)
 
     # x = Reshape((125, 80)) (x)
     # keras.backend.squeeze(x, axis)
@@ -319,7 +321,7 @@ def AttRNNSpeechModel(input_shape=(99, 40), output_shape=35, rnn_func=L.LSTM):
     attVector = L.Dot(axes=[1, 1])([attScores, x])  # [b_s, vec_dim]
 
     x = L.Dense(64, activation='relu')(attVector)
-    x = L.Dropout(0.4)(x)
+    x = L.Dropout(0.3)(x)
     
     output = L.Dense(output_shape, activation='softmax', name='output')(x)
 
