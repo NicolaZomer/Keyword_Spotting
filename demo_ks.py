@@ -241,15 +241,31 @@ class DemoKeywordSpotting:
         Load the pre-trained model 
         '''
         pretrained_model = tf.keras.models.load_model(model_path)
-        print('\n\nThe model has been loaded')
+        print(f'\nThe model "{model_path}" has been loaded!')
         
         return pretrained_model
 
     
 if __name__=="__main__":
+    models_path = "../trained_models"
+
+    # get available models
+    models_dict = {}
+    for file in os.listdir(models_path):
+        if file.endswith(".h5"):
+            models_dict[len(models_dict)] = file
     
-    model_name = 'custom_cnn'
-    ks_streaming = DemoKeywordSpotting(f'../trained_models/{model_name}.h5')
+    # print available models
+    print("\nAvailable models:")
+    for key, value in models_dict.items():
+        print(key, ':', value)
+
+    # input model
+    model_index = input('\n- Insert input model index and press Enter to continue\n... ')
+    print("")
+    model_name = models_dict[int(model_index)]
+
+    ks_streaming = DemoKeywordSpotting(os.path.join(models_path, model_name).replace("\\","/"))
     
     # input device
     device = input(
