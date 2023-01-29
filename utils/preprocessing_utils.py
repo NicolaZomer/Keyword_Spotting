@@ -12,54 +12,55 @@ import importlib
 from python_speech_features import logfbank, mfcc, delta
 
 commands = [
-  'backward',
-  'bed',
-  'bird',
-  'cat',
-  'dog',
-  'down',
-  'eight',
-  'five',
-  'follow',
-  'forward',
-  'four',
-  'go',
-  'happy',
-  'house',
-  'learn',
-  'left',
-  'marvin',
-  'nine',
-  'no',
-  'off',
-  'on',
-  'one',
-  'right',
-  'seven',
-  'sheila',
-  'six',
-  'stop',
-  'three',
-  'tree',
-  'two',
-  'up',
-  'visual',
-  'wow',
-  'yes',
-  'zero'
+    'backward',
+    'bed',
+    'bird',
+    'cat',
+    'dog',
+    'down',
+    'eight',
+    'five',
+    'follow',
+    'forward',
+    'four',
+    'go',
+    'happy',
+    'house',
+    'learn',
+    'left',
+    'marvin',
+    'nine',
+    'no',
+    'off',
+    'on',
+    'one',
+    'right',
+    'seven',
+    'sheila',
+    'six',
+    'stop',
+    'three',
+    'tree',
+    'two',
+    'up',
+    'visual',
+    'wow',
+    'yes',
+    'zero'
 ]
 
 label_to_class = {commands[i]:i for i in range(len(commands))}
 class_to_label = {i:commands[i] for i in range(len(commands))}
 
-data_path='data/full_speech_commands'
+data_path = 'data/full_speech_commands'
 
 
 def load_data(file_name, file_label, data_path_=data_path):
+    
     if isinstance(file_name, bytes):
-        file_name = file_name.decode()
+        file_name   = file_name.decode()
     if isinstance(file_label, bytes):
-        file_label = file_label.decode()
+        file_label  = file_label.decode()
     if isinstance(data_path_, bytes):
         data_path_ = data_path_.decode()
 
@@ -67,65 +68,64 @@ def load_data(file_name, file_label, data_path_=data_path):
         file_label = class_to_label[file_label]
 
     file_path = data_path_ + '/' + file_label + '/' + file_name
-    _, data = wavfile.read(file_path)
+    _, data  = wavfile.read(file_path)
 
     return data.squeeze()
 
 
 def padding_trimming(data, output_sequence_length=16000):
+    
     data_shape = data.shape[0]
     
     # trimming
-    if data_shape>output_sequence_length:
-        data=data[:output_sequence_length]
+    if data_shape > output_sequence_length:
+        data = data[:output_sequence_length]
     
     # padding
-    elif data_shape<output_sequence_length:
-        tot_pad = output_sequence_length-data_shape
+    elif data_shape < output_sequence_length:
+        tot_pad    = output_sequence_length - data_shape
         pad_before = int(np.ceil(tot_pad/2))
         pad_after  = int(np.floor(tot_pad/2))
-        data = np.pad(data, pad_width=(pad_before, pad_after), mode='mean')
+        data       = np.pad(data, pad_width=(pad_before, pad_after), mode='mean')
         
     return data
 
 
 def random_time_shift(data, low=-100, high=100):
-  y_shift = int(np.random.uniform(low, high)*16)
+    
+    y_shift = int(np.random.uniform(low, high)*16)
 
-  if y_shift>=0:
-    data = np.pad(data[y_shift:], pad_width=(0, y_shift), mode='mean')
-  else: 
-    data = np.pad(data[:len(data)+y_shift], pad_width=(-y_shift, 0), mode='mean')
+    if y_shift >= 0:
+        data = np.pad(data[y_shift:], pad_width=(0, y_shift), mode='mean')
+    else: 
+        data = np.pad(data[:len(data)+y_shift], pad_width=(-y_shift, 0), mode='mean')
 
-  return data
+    return data.astype(np.float32)
 
 
-def background_noise(data, noise_dict, select_noise=None, noise_reduction=0.5):
+def background_noise(data, noise_dict, select_noise=None, noise_reduction=0.5, *args):
     '''
     data: input audio signal, already loaded and preprocessed, it must be a numpy array 
     select_noise: decide what kind of noise to add to the input signal, by default a random choice 
     noise_reduction: set it to a value between 0 and 1 to reduce the amount of noise, by default 0.8
     '''
     
-    target_size = data.shape[0]
-    
-    # None case
-    if select_noise is None:
-        select_noise = np.random.choice(np.arange(1, 7))
-        
-    # other cases, plus random selection  
-    noise_data = noise_dict[str(select_noise)]
-    N = noise_data.shape[0]
+    # noise selection
+    if (select_noise is None) or (select_noise == -1):
+        select_noise = np.random.choice(np.arange(1, 7)) # random selection
+    noise_data = args[select_noise-1] if (noise_dict == -1) else noise_dict[str(select_noise)]
     
     # random cropping
-    from_ = np.random.randint(0, int(N-target_size))
-    to_ = from_ + target_size
-    noise_data = noise_data[from_:to_]
+    target_size = data.shape[0]
+    noise_size  = noise_data.shape[0]
+    from_       = np.random.randint(0, int(noise_size-target_size))
+    to_         = from_ + target_size
+    noise_data  = noise_data[from_:to_]
     
     # add noise to input audio
     data_with_noise = data + (1-noise_reduction)*noise_data
     
-    return data_with_noise
+    return data_with_noise.astype(np.float32)
 
 
 def get_spectrogram(
@@ -156,7 +156,7 @@ def get_spectrogram(
     # Add an epsilon to avoid taking a log of zero
     spectrogram = np.log(spectrogram.T + np.finfo(float).eps)
 
-    return spectrogram
+    return spectrogram.astype(np.float32)
 
 
 def get_logfbank(
@@ -186,11 +186,13 @@ def get_logfbank(
                             )
     logfbank_feat = logfbank_feat.T
 
-    return logfbank_feat
+    return logfbank_feat.astype(np.float32)
 
 
 def get_mfcc(
             signal,                    # audio signal from which to compute features (N*1 array)
+            delta_order  = 2,          # maximum order of the Delta features
+            delta_window = 1,          # window size for the Delta features
             samplerate   = 16000,      # samplerate of the signal we are working with
             winlen       = 25,         # length of the analysis window (milliseconds)
             winstep      = 10,         # step between successive windows (milliseconds)
@@ -200,9 +202,7 @@ def get_mfcc(
             lowfreq      = 300,        # lowest band edge of mel filters (Hz)
             highfreq     = None,       # highest band edge of mel filters (Hz)
             appendEnergy = True,       # if this is true, the zeroth cepstral coefficient is replaced with the log of the total frame energy
-            winfunc      = np.hamming, # analysis window to apply to each frame
-            delta_order  = 2,          # maximum order of the Delta features
-            delta_window = 1           # window size for the Delta features
+            winfunc      = np.hamming  # analysis window to apply to each frame
             ):
 
     if highfreq is None:
@@ -235,66 +235,102 @@ def get_mfcc(
     # Full feature vector
     full_feat = np.vstack(features)
 
-    return full_feat
+    return full_feat.astype(np.float32)
 
 
-def load_and_preprocess_data(file_name, file_label, data_path_=data_path, apply_background_noise=False, noise_dict=None, noise_reduction=0.5, features=1, resize=False, random_shift=False):
-    '''
-    features:
-    - 1 for MFCC features (default), delta_order=2
-    - 2 for log Mel-filterbank energy features
-    - 3 for spectrogram
-    - 4 for Discrete Wavelet Transform + MFCC features
-    - 5 for MFCC features, delta_order=0
-    '''
+def get_dwt(data, wavelet='db1', mode='sym'):
     
+    data, _ = dwt(data=data, wavelet=wavelet, mode=mode)
+    
+    return data.astype(np.float32)
+
+
+def load_and_preprocess_data(file_name, file_label, data_path_=data_path):
+
     # load data
     data = load_data(file_name, file_label, data_path_=data_path_)
     
     # padding/trimming
     data = padding_trimming(data)
-
-    # random time shift
-    if random_shift:
-        data = random_time_shift(data)
-    
-    # add background noise
-    if apply_background_noise and np.random.uniform()<0.8:
-        data = background_noise(data, noise_dict=noise_dict, noise_reduction=noise_reduction)
-
-    # extract features
-    if features == 1:
-        data_features = get_mfcc(data)
-    
-    elif features == 2:
-        data_features = get_logfbank(data)
-
-    elif features == 3:
-        data_features = get_spectrogram(data)
-
-    elif features == 4:
-        data, _ = dwt(data=data, wavelet='db1', mode='sym')
-        data_features = get_mfcc(data)
-        
-    elif features == 5:
-        data_features = get_mfcc(data, delta_order=0)
-        
-    elif features == 6:
-        data_features = get_logfbank(data, winlen=32, winstep=15.5, nfilt=64)
-        
-    else:
-        data_features = data
-    
-    # resize feature vector
-    if resize:
-        data_features = np.resize(data_features, (50, 50))
         
     # TensorFlow takes as input 32-bit floating point data
-    return data_features.astype(np.float32)
+    return data.astype(np.float32)
+
+
+def create_dataset(df, data_path_=data_path, cache_file=None, shuffle=True, apply_random_shift=False, apply_background_noise=False, noise_dict=None, noise_reduction=0.5, features=1, batch_size=32):
+    '''
+    features:
+    - 1 for MFCC features [delta_order=2] (default)
+    - 2 for log Mel-filterbank energy features
+    - 3 for spectrogram
+    - 4 for Discrete Wavelet Transform + MFCC features
+    - 5 for MFCC features [delta_order=0]
+    - 6 for log Mel-filterbank energy features [winlen=32, winstep=15.5, nfilt=64]
+    '''
+
+    # Convert DataFrame to lists
+    file_names  = df['file'].tolist()
+    file_labels = df['class'].tolist()
+
+    # Create a Dataset object
+    dataset = tf.data.Dataset.from_tensor_slices((file_names, file_labels))
+
+    # Map the "load_and_preprocess_data" function
+    dataset = dataset.map(lambda file_name, file_label: (tf.numpy_function(load_and_preprocess_data, [file_name, file_label, data_path_], tf.float32), file_label), num_parallel_calls=os.cpu_count())
+
+    # Cache
+    if cache_file:
+        dataset = dataset.cache(filename=cache_file)
+
+    # Shuffle
+    if shuffle:
+        dataset = dataset.shuffle(buffer_size=len(df))
+
+    # Repeat the dataset indefinitely
+    dataset = dataset.repeat()
+
+    # Map the "random_time_shift" function
+    if apply_random_shift:
+        dataset = dataset.map(lambda data, label: (tf.numpy_function(random_time_shift, [data], tf.float32), label))
+
+    # Map the "background_noise" function
+    if apply_background_noise and np.random.uniform() < 0.8:
+        noise_list = [tf.convert_to_tensor(noise, dtype=tf.float32) for noise in noise_dict.values()]
+        dataset    = dataset.map(lambda data, label: (tf.numpy_function(background_noise, [data, -1, -1, noise_reduction, *noise_list], tf.float32), label))
+
+    # Extract features
+    if   features == 1:
+        dataset = dataset.map(lambda data, label: (tf.numpy_function(get_mfcc,        [data], tf.float32), label))
+    elif features == 2:
+        dataset = dataset.map(lambda data, label: (tf.numpy_function(get_logfbank,    [data], tf.float32), label))
+    elif features == 3:
+        dataset = dataset.map(lambda data, label: (tf.numpy_function(get_spectrogram, [data], tf.float32), label))
+    elif features == 4:
+        dataset = dataset.map(lambda data, label: (tf.numpy_function(get_dwt,         [data], tf.float32), label))
+        dataset = dataset.map(lambda data, label: (tf.numpy_function(get_mfcc,        [data], tf.float32), label))
+    elif features == 5:
+        dataset = dataset.map(lambda data, label: (tf.numpy_function(get_mfcc,        [data, 0], tf.float32), label))
+    elif features == 6:
+        dataset = dataset.map(lambda data, label: (tf.numpy_function(get_logfbank,    [data, 16000, 32, 15.5, 64], tf.float32), label))
+
+    # Batch
+    dataset = dataset.batch(batch_size=batch_size)
+
+    # Prefetch
+    dataset = dataset.prefetch(buffer_size=1)
+
+    # Steps
+    steps = int(np.ceil(len(df) / batch_size))
+
+    return dataset, steps
+
 
 def remove_file_starting_with(name):
+    
     for filename in glob.glob(name+'*'):
         os.remove(filename) 
         
+        
 def reimport_module(module_name):
+    
     importlib.reload(module_name)
