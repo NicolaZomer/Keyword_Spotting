@@ -266,6 +266,7 @@ def create_dataset(df, is_train=True, data_path_=data_path, cache_file=None, shu
     - 4 for Discrete Wavelet Transform + MFCC features
     - 5 for MFCC features [delta_order=0]
     - 6 for log Mel-filterbank energy features [winlen=32, winstep=15.5, nfilt=64]
+    - 7 for log Mel-filterbank energy features [winlen=25, winstep=8,    nfilt=80]
     '''
 
     # Convert DataFrame to lists
@@ -314,6 +315,8 @@ def create_dataset(df, is_train=True, data_path_=data_path, cache_file=None, shu
         dataset = dataset.map(lambda data, label: (tf.numpy_function(get_mfcc,        [data, 0], tf.float32), label))
     elif features == 6:
         dataset = dataset.map(lambda data, label: (tf.numpy_function(get_logfbank,    [data, 16000, 32, 15.5, 64], tf.float32), label))
+    elif features == 7:
+        dataset = dataset.map(lambda data, label: (tf.numpy_function(get_logfbank,    [data, 16000, 25, 8, 80], tf.float32), label))
 
     if not is_train:
 
