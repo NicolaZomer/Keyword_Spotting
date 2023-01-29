@@ -257,7 +257,7 @@ def load_and_preprocess_data(file_name, file_label, data_path_=data_path):
     return data.astype(np.float32)
 
 
-def create_dataset(df, data_path_=data_path, cache_file=None, shuffle=True, apply_random_shift=False, apply_background_noise=False, noise_dict=None, noise_reduction=0.5, features=1, batch_size=32):
+def create_dataset(df, is_train=True, data_path_=data_path, cache_file=None, shuffle=True, apply_random_shift=False, apply_background_noise=False, noise_dict=None, noise_reduction=0.5, features=1, batch_size=32):
     '''
     features:
     - 1 for MFCC features [delta_order=2] (default)
@@ -278,16 +278,18 @@ def create_dataset(df, data_path_=data_path, cache_file=None, shuffle=True, appl
     # Map the "load_and_preprocess_data" function
     dataset = dataset.map(lambda file_name, file_label: (tf.numpy_function(load_and_preprocess_data, [file_name, file_label, data_path_], tf.float32), file_label), num_parallel_calls=os.cpu_count())
 
-    # Cache
-    if cache_file:
-        dataset = dataset.cache(filename=cache_file)
+    if is_train:
 
-    # Shuffle
-    if shuffle:
-        dataset = dataset.shuffle(buffer_size=len(df))
+        # Cache
+        if cache_file:
+            dataset = dataset.cache(filename=cache_file)
 
-    # Repeat the dataset indefinitely
-    dataset = dataset.repeat()
+        # Shuffle
+        if shuffle:
+            dataset = dataset.shuffle(buffer_size=len(df))
+
+        # Repeat the dataset indefinitely
+        dataset = dataset.repeat()
 
     # Map the "random_time_shift" function
     if apply_random_shift:
@@ -312,6 +314,19 @@ def create_dataset(df, data_path_=data_path, cache_file=None, shuffle=True, appl
         dataset = dataset.map(lambda data, label: (tf.numpy_function(get_mfcc,        [data, 0], tf.float32), label))
     elif features == 6:
         dataset = dataset.map(lambda data, label: (tf.numpy_function(get_logfbank,    [data, 16000, 32, 15.5, 64], tf.float32), label))
+
+    if not is_train:
+
+        # Cache
+        if cache_file:
+            dataset = dataset.cache(filename=cache_file)
+
+        # Shuffle
+        if shuffle:
+            dataset = dataset.shuffle(buffer_size=len(df))
+
+        # Repeat the dataset indefinitely
+        dataset = dataset.repeat()
 
     # Batch
     dataset = dataset.batch(batch_size=batch_size)
