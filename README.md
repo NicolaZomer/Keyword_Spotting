@@ -23,7 +23,7 @@ This project is developed as a final project of the course  [Human Data Analytic
 - [Keyword Spotting: Conformer](./notebooks/06_conformer_bo.ipynb) <br>
     In this notebook, thanks to the library `audio_classification_models`, we implement a baseline Conformer architecture inspired by [Gulati20]. This model combines **Convolutional Neural Networks** and **Transformers** to get the best of both worlds by modeling both local and global features of an audio sequence in a parameter-efficient way. In detail, we use only one Conformer block in order to reduce the number of model parameters. Moreover, we perform hyperparameter tuning by means of Bayesian optimization in order to find, among the models with less than 2M parameters, the one that leads to the best accuracy.
 
-- [Keyword Spotting: GAN-based classification](./notebooks/07_conditional_dcgan.ipynb)
+- [Keyword Spotting: GAN-based classification](./notebooks/07_conditional_dcgan.ipynb) <br>
     In this notebook we try to implement a GAN-based classifier inspired by the paper [GAN-based Data Generation for Speech Emotion Recognition](https://www.isca-speech.org/archive_v0/Interspeech_2020/pdfs/2898.pdf). Unfortunately, to date we have not been able to figure out how to properly train the generator and discriminator in this specific case. As a result, we cannot currently test this approach.
 
 # Utils
