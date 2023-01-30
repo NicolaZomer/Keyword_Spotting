@@ -18,12 +18,13 @@ This project is developed as a final project of the course  [Human Data Analytic
     In this notebook we play with ResNet models for the keyword spotting task. We start by implementing a simple ResNet architecture inspired by [Tang18] and then, motivated by [Vygon21], we modify such model and we train it to get a meaningful embedded representation of the input signals. We finally use k-NN to perform the classification task on these intermediate representations.
 
 - [Keyword Spotting: a neural attention model for speech command recognition](./notebooks/05_crnn_with_attention.ipynb) <br>
-    This notebook implements an attention model for speech command recognotion. It is obtained as a modification of a [Demo notebook](https://github.com/douglas125/SpeechCmdRecognition/blob/master/Speech_Recog_Demo.ipynb) prepared by the authors of the paper [A neural attention model for speech command recognition](https://arxiv.org/abs/1808.08929).
+    This notebook implements an attention model for speech command recognition. It is obtained as a modification of a [Demo notebook](https://github.com/douglas125/SpeechCmdRecognition/blob/master/Speech_Recog_Demo.ipynb) prepared by the authors of the paper [A neural attention model for speech command recognition](https://arxiv.org/abs/1808.08929).
 
 - [Keyword Spotting: Conformer](./notebooks/06_conformer_bo.ipynb) <br>
-    This model combines **Convolutional Neural Networks** and **Transformers** to get the best of both worlds by modeling both local and global features of an audio sequence in a parameter-efficient way. We will use only the **Encoder** part of the model.
+    In this notebook, thanks to the library `audio_classification_models`, we implement a baseline Conformer architecture inspired by [Gulati20]. This model combines **Convolutional Neural Networks** and **Transformers** to get the best of both worlds by modeling both local and global features of an audio sequence in a parameter-efficient way. In detail, we use only one Conformer block in order to reduce the number of model parameters. Moreover, we perform hyperparameter tuning by means of Bayesian optimization in order to find, among the models with less than 2M parameters, the one that leads to the best accuracy.
 
 - [Keyword Spotting: GAN-based classification](./notebooks/07_conditional_dcgan.ipynb)
+    In this notebook we try to implement a GAN-based classifier inspired by the paper [GAN-based Data Generation for Speech Emotion Recognition](https://www.isca-speech.org/archive_v0/Interspeech_2020/pdfs/2898.pdf). Unfortunately, to date we have not been able to figure out how to properly train the generator and discriminator in this specific case. As a result, we cannot currently test this approach.
 
 # Utils
 
