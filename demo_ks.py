@@ -130,7 +130,7 @@ class DemoKeywordSpotting:
                 # stop with vocal command
                 if stop_by_voice is True:
                     if i_kw==label_to_class['stop'] and kw_prob>self.stop_threshold:
-                        print('\nProcess closed')
+                        print('Process closed')
                         pystream.stop_stream()  # stop stream
                         pystream.close()        # close stream
                         p.terminate()           # release PortAudio system resources
@@ -142,7 +142,7 @@ class DemoKeywordSpotting:
                     
                                                  
         except KeyboardInterrupt:
-            print('\nProcess closed')
+            print('Process closed')
             pystream.stop_stream()  # stop stream
             pystream.close()        # close stream
             p.terminate()           # release PortAudio system resources
