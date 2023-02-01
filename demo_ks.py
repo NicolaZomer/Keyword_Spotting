@@ -1,5 +1,6 @@
 import sys, os
 os.environ['FOR_DISABLE_CONSOLE_CTRL_HANDLER'] = '1'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 import tensorflow as tf
 import pyaudio
 import keyboard
@@ -51,6 +52,9 @@ commands = [
 ]
 
 class_to_label = {i:commands[i] for i in range(len(commands))}
+label_to_class = {commands[i]:i for i in range(len(commands))}
+
+stop_by_voice = True
 
 class DemoKeywordSpotting:
     def __init__(self, model_path, prob_threshold=0.9): 
@@ -74,7 +78,8 @@ class DemoKeywordSpotting:
         self.data = np.zeros(self.window_size, dtype='int16')
         
         # classification threshold
-        self.classification_treshold = prob_threshold
+        self.classification_threshold = prob_threshold
+        self.stop_threshold = 0.99
 
         
     def stream(self):
@@ -121,6 +126,20 @@ class DemoKeywordSpotting:
                 # print results
                 if is_keyword:
                     print('\x1b[1;32;40m' + 'KW: %s \nProbability %.1f%%' %(kw, kw_prob*100) + '\x1b[0m\n')
+                    
+                # stop with vocal command
+                if stop_by_voice is True:
+                    if i_kw==label_to_class['stop'] and kw_prob>self.stop_threshold:
+                        print('\nProcess closed')
+                        pystream.stop_stream()  # stop stream
+                        pystream.close()        # close stream
+                        p.terminate()           # release PortAudio system resources
+
+                        try:
+                            sys.exit(0)
+                        except SystemExit:
+                            os._exit(0)
+                    
                                                  
         except KeyboardInterrupt:
             print('\nProcess closed')
@@ -153,7 +172,7 @@ class DemoKeywordSpotting:
         ax = plt.gca()
         bars = ax.bar(commands, probabilities, edgecolor='black', alpha=0.8, color='cornflowerblue')
         
-        if kw_prob>self.classification_treshold:
+        if kw_prob>self.classification_threshold:
             bars[i_kw].set_color('forestgreen')
             bars[i_kw].set_edgecolor('black')
             
@@ -163,7 +182,7 @@ class DemoKeywordSpotting:
         ax.set_ylim(bottom=0, top=100)
         ax.tick_params(axis='x', labelrotation=90)
         xmin, xmax = plt.xlim()
-        ax.hlines(self.classification_treshold*100, xmin=xmin, xmax=xmax, linestyle='dashed', color='firebrick', linewidth=2)
+        ax.hlines(self.classification_threshold*100, xmin=xmin, xmax=xmax, linestyle='dashed', color='firebrick', linewidth=2)
         
         plt.tight_layout()
         plt.pause(.01)
@@ -180,7 +199,7 @@ class DemoKeywordSpotting:
         i_kw = np.argmax(prediction)
         # print(class_to_label[i_kw], prediction[i_kw])
         
-        if prediction[i_kw]>self.classification_treshold:
+        if prediction[i_kw]>self.classification_threshold:
             is_kw = True
             output = class_to_label[i_kw]
             
@@ -262,7 +281,7 @@ if __name__=="__main__":
 
     # input model
     model_index = input('\n- Insert input model index and press Enter to continue\n... ')
-    print("")
+    # print("")
     model_name = models_dict[int(model_index)]
 
     ks_streaming = DemoKeywordSpotting(os.path.join(models_path, model_name).replace("\\","/"))
