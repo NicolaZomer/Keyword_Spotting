@@ -79,7 +79,9 @@ class DemoKeywordSpotting:
         
         # classification threshold
         self.classification_threshold = prob_threshold
-        self.stop_threshold = 0.99
+
+        # last two keywords detected
+        self.last_2_kw = ['','']
 
         
     def stream(self):
@@ -126,10 +128,12 @@ class DemoKeywordSpotting:
                 # print results
                 if is_keyword:
                     print('\x1b[1;32;40m' + 'KW: %s \nProbability %.1f%%' %(kw, kw_prob*100) + '\x1b[0m\n')
+                    self.last_2_kw.pop(0)
+                    self.last_2_kw.append(kw)
                     
                 # stop with vocal command
                 if stop_by_voice is True:
-                    if i_kw==label_to_class['stop'] and kw_prob>self.stop_threshold:
+                    if ' '.join(self.last_2_kw) == 'off stop':
                         print('Process closed')
                         pystream.stop_stream()  # stop stream
                         pystream.close()        # close stream
