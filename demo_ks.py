@@ -62,7 +62,7 @@ class DemoKeywordSpotting:
         self.model = self.load_model(model_path)
         
         # parameters for input audio 
-        self.CHUNK_DURATION = 0.8           # size of the chunck window, in seconds (select a fraction of second!)
+        self.CHUNK_DURATION = 0.9           # size of the chunck window, in seconds (select a fraction of second!)
         self.FORMAT = pyaudio.paInt16       # 16bit format per sample
         self.CHANNELS = 1                   # single channel for microphone
         self.RATE = 16000                   # samples per second [Hz] (common choice)
